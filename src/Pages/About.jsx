@@ -118,7 +118,7 @@ const AboutPage = () => {
     const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
     const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
     
-    const startDate = new Date("2021-11-06");
+    const startDate = new Date("2023-11-13");
     const today = new Date();
     const experience = today.getFullYear() - startDate.getFullYear() -
       (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
@@ -205,7 +205,7 @@ const AboutPage = () => {
                 data-aos="fade-right"
                 data-aos-duration="1300"
               >
-                Eki Zulfar Rachman
+                Ramsy Parker
               </span>
             </h2>
             
@@ -214,8 +214,7 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-             Seorang lulusan Teknik Jaringan Komputer dan Telekomunikasi yang memiliki ketertarikan besar dalam pengembangan Front-End. Saya berfokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.
-            </p>
+            I’m an Informatics Engineering student based in Indonesia, passionate about software development and UI/UX design. I enjoy creating intuitive digital products that are both functional and user-friendly.</p>
 
                {/* Quote Section */}
       <div 
@@ -235,12 +234,12 @@ const AboutPage = () => {
         </div>
         
         <blockquote className="text-gray-300 text-center lg:text-left italic font-medium text-sm relative z-10 pl-6">
-          "Leveraging AI as a professional tool, not a replacement."
+          "Design is not just what it looks like and feels like. Design is how it works."
         </blockquote>
       </div>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
-              <a href="https://drive.google.com/drive/folders/1BOm51Grsabb3zj6Xk27K-iRwI1zITcpo" className="w-full lg:w-auto">
+              <a href="https://drive.google.com/drive/folders/1GXpr3uK9r380kMK-N_0zq0zgVANbeyqd?usp=sharing" className="w-full lg:w-auto">
               <button 
                 data-aos="fade-up"
                 data-aos-duration="800"
