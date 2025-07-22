@@ -162,13 +162,13 @@ ON storage.objects FOR SELECT TO public USING (bucket_id = 'profile-images');
 -- Insert one example project
 INSERT INTO public.projects ("Title", "Description", "Img", "Link", "Github", "Features", "TechStack") 
 VALUES (
-    'Example Project Title', 
-    'A simple description for this example project, explaining its main purpose and goals.', 
-    'REPLACE_WITH_YOUR_PROJECT_IMAGE_URL.png', 
-    'REPLACE_WITH_YOUR_LIVE_DEMO_URL.com', 
-    'REPLACE_WITH_YOUR_GITHUB_REPO_URL.com', 
-    '["Main Feature A", "Core Function B", "Key Ability C"]', 
-    '["React", "Supabase", "Tailwind CSS"]'
+    'Web Booking Lapangan Futsal', 
+    'A full-featured web application for booking futsal fields, built with Laravel and integrated with Midtrans for seamless online payments. Designed to simplify the reservation process while ensuring secure transactions for users and smooth management for field owners.', 
+    'Projects/image.png', 
+    'sipelemfutsal.my.id', 
+    'https://github.com/ramsyparker/filament-sipelem', 
+    '["Online Payment (Midtrans)", "Field Booking System", "User Role Management", "Booking History", "Admin Dashboard"]', 
+    '["Laravel", "MySql", "Midtrans API"]'
 );
 
 -- Insert one example certificate

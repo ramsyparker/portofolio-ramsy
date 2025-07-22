@@ -110,7 +110,7 @@ const ProjectDetails = () => {
         ...selectedProject,
         Features: selectedProject.Features || [],
         TechStack: selectedProject.TechStack || [],
-        Github: selectedProject.Github || 'https://github.com/EkiZR',
+        Github: selectedProject.Github || 'https://github.com/ramsyparker',
       };
       setProject(enhancedProject);
     }
@@ -224,11 +224,13 @@ const ProjectDetails = () => {
               
                 <div className="absolute inset-0 bg-gradient-to-t from-[#030014] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <img
-                  src={project.Img}
+                  src={project.Img && !project.Img.startsWith('/') ? `/${project.Img}` : project.Img}
                   alt={project.Title}
                   className="w-full  object-cover transform transition-transform duration-700 will-change-transform group-hover:scale-105"
                   onLoad={() => setIsImageLoaded(true)}
+                  onError={(e) => { e.target.style.display = 'none'; console.error('Gambar gagal dimuat:', project.Img); }}
                 />
+                {console.log('Project detail:', project)}
                 <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/10 transition-colors duration-300 rounded-2xl" />
               </div>
 

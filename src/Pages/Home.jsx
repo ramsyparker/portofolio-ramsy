@@ -24,11 +24,6 @@ const MainTitle = memo(() => (
   </div>
 ));
 
-const TechStack = memo(({ tech }) => (
-  <div className="px-4 py-2 hidden sm:block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
-    {tech}
-  </div>
-));
 
 const CTAButton = memo(({ href, text, icon: Icon }) => (
   <a href={href}>
@@ -63,11 +58,10 @@ const TYPING_SPEED = 100;
 const ERASING_SPEED = 50;
 const PAUSE_DURATION = 2000;
 const WORDS = ["Frontend Developer", "UI/UX Enthusiast"];
-const TECH_STACK = ["Figma", "React", "Node.js", "Tailwind"];
 const SOCIAL_LINKS = [
   { icon: Github, link: "https://github.com/ramsyparker" },
-  { icon: Linkedin, link: "https://www.linkedin.com/in/nuraditiyaramadhani/" },
-  { icon: Instagram, link: "https://www.instagram.com/413.12am" }
+  { icon: Linkedin, link: "https://www.linkedin.com/in/nuraditiyaramadhani" },
+  { icon: Instagram, link: "https://www.instagram.com/aa.ramsy" }
 ];
 
 const Home = () => {
@@ -168,13 +162,6 @@ const Home = () => {
                   data-aos="fade-up"
                   data-aos-delay="1000">
                   Crafting engaging, modern, and responsive websites focused on great user experience and clean design.</p>
-
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
-                  {TECH_STACK.map((tech, index) => (
-                    <TechStack key={index} tech={tech} />
-                  ))}
-                </div>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
