@@ -107,6 +107,7 @@ const techStacks = [
   { icon: "html.svg", language: "HTML" },
   { icon: "css.svg", language: "CSS" },
   { icon: "javascript.svg", language: "JavaScript" },
+  { icon: "tailwind.svg", language: "Tailwind"},
   { icon: "reactjs.svg", language: "ReactJS" },
   { icon: "php.svg", language: "PHP" },
   { icon: "laravel.svg", language: "Laravel" },
@@ -116,6 +117,11 @@ const techStacks = [
   { icon: "mongodb.svg", language: "MongoDB" },
   { icon: "mysql.svg", language: "MySql" },
   { icon: "figma.svg", language: "Figma" },
+  { icon: "postman.svg", language: "Postman"},
+  { icon: "TensorFlow.svg", language: "TensorFlow"},
+  { icon: "Android.svg", language: "Android"},
+  { icon: "java.svg", language: "Java"},
+  { icon: "Git.svg", language : "Git"},
   
 ];
 
