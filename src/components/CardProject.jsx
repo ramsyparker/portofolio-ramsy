@@ -9,7 +9,9 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
       console.log("ProjectLink kosong");
       e.preventDefault();
       alert("Live demo link is not available");
+      return;
     }
+    // Jika ProjectLink ada, biarkan link berfungsi normal
   };
   
   const handleDetails = (e) => {
@@ -48,7 +50,7 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id }) => {
             <div className="pt-4 flex items-center justify-between">
               {ProjectLink ? (
                 <a
-                href={ProjectLink || "#"}
+                  href={ProjectLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleLiveDemo}
