@@ -6,11 +6,13 @@ import "aos/dist/aos.css";
 import { supabase } from '../supabase';
 
 
-const Comment = memo(({ comment, formatDate, index, isPinned = false }) => (
+const Comment = memo(({ comment, formatDate, index, isPinned = false, isOptimistic = false }) => (
     <div 
         className={`px-4 pt-4 pb-2 rounded-xl border transition-all group hover:shadow-lg hover:-translate-y-0.5 ${
             isPinned 
                 ? 'bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-indigo-500/30 hover:bg-gradient-to-r hover:from-indigo-500/15 hover:to-purple-500/15' 
+                : isOptimistic
+                ? 'bg-white/5 border-white/10 hover:bg-white/10 opacity-75'
                 : 'bg-white/5 border-white/10 hover:bg-white/10'
         }`}
     >
@@ -45,6 +47,12 @@ const Comment = memo(({ comment, formatDate, index, isPinned = false }) => (
                         }`}>
                             {comment.user_name}
                         </h4>
+                        <img 
+                            src="/svg/verified.svg" 
+                            alt="Verified" 
+                            className="w-4 h-4 flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity"
+                            title="Verified User"
+                        />
                         {isPinned && (
                             <span className="px-2 py-0.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-full">
                                 Admin
@@ -55,9 +63,15 @@ const Comment = memo(({ comment, formatDate, index, isPinned = false }) => (
                         {formatDate(comment.created_at)}
                     </span>
                 </div>
-                <p className="text-gray-300 text-sm break-words leading-relaxed relative bottom-2">
-                    {comment.content}
-                </p>
+                                        <p className="text-gray-300 text-sm break-words leading-relaxed relative bottom-2">
+                            {comment.content}
+                            {isOptimistic && (
+                                <span className="inline-flex items-center gap-1 ml-2 text-xs text-indigo-400">
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                    Posting...
+                                </span>
+                            )}
+                        </p>
             </div>
         </div>
     </div>
@@ -230,6 +244,7 @@ const Komentar = () => {
     const [pinnedComment, setPinnedComment] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const commentsContainerRef = useRef(null);
 
     useEffect(() => {
         // Initialize AOS
@@ -289,13 +304,33 @@ const Komentar = () => {
             .channel('portfolio_comments')
             .on('postgres_changes', 
                 { 
-                    event: '*', 
+                    event: 'INSERT', 
                     schema: 'public', 
                     table: 'portfolio_comments',
                     filter: 'is_pinned=eq.false'
                 }, 
-                () => {
-                    fetchComments(); // Refresh comments when changes occur
+                (payload) => {
+                    // Only add if it's not already in the list (avoid duplicates)
+                    setComments(prevComments => {
+                        const exists = prevComments.some(c => c.id === payload.new.id);
+                        if (!exists) {
+                            return [payload.new, ...prevComments];
+                        }
+                        return prevComments;
+                    });
+                }
+            )
+            .on('postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'portfolio_comments',
+                    filter: 'is_pinned=eq.false'
+                },
+                (payload) => {
+                    setComments(prevComments => 
+                        prevComments.filter(c => c.id !== payload.old.id)
+                    );
                 }
             )
             .subscribe();
@@ -334,7 +369,20 @@ const Komentar = () => {
         try {
             const profileImageUrl = await uploadImage(imageFile);
             
-            const { error } = await supabase
+            // Create optimistic comment
+            const optimisticComment = {
+                id: `temp-${Date.now()}`,
+                content: newComment,
+                user_name: userName,
+                profile_image: profileImageUrl,
+                is_pinned: false,
+                created_at: new Date().toISOString()
+            };
+            
+            // Add comment optimistically to UI
+            setComments(prevComments => [optimisticComment, ...prevComments]);
+            
+            const { data, error } = await supabase
                 .from('portfolio_comments')
                 .insert([
                     {
@@ -344,11 +392,30 @@ const Komentar = () => {
                         is_pinned: false,
                         created_at: new Date().toISOString()
                     }
-                ]);
+                ])
+                .select()
+                .single();
 
             if (error) {
+                // Remove optimistic comment if error
+                setComments(prevComments => prevComments.filter(c => c.id !== optimisticComment.id));
                 throw error;
             }
+            
+            // Replace optimistic comment with real one
+            setComments(prevComments => 
+                prevComments.map(c => 
+                    c.id === optimisticComment.id ? data : c
+                )
+            );
+            
+            // Scroll to top to show new comment
+            setTimeout(() => {
+                if (commentsContainerRef.current) {
+                    commentsContainerRef.current.scrollTop = 0;
+                }
+            }, 100);
+            
         } catch (error) {
             setError('Failed to post comment. Please try again.');
             console.error('Error adding comment: ', error);
@@ -404,7 +471,12 @@ const Komentar = () => {
                     <CommentForm onSubmit={handleCommentSubmit} isSubmitting={isSubmitting} error={error} />
                 </div>
 
-                <div className="space-y-4 h-[328px] overflow-y-auto overflow-x-hidden custom-scrollbar pt-1 pr-1 " data-aos="fade-up" data-aos-delay="200">
+                <div 
+                    ref={commentsContainerRef}
+                    className="space-y-4 h-[328px] overflow-y-auto overflow-x-hidden custom-scrollbar pt-1 pr-1 " 
+                    data-aos="fade-up" 
+                    data-aos-delay="200"
+                >
                     {/* Pinned Comment */}
                     {pinnedComment && (
                         <div data-aos="fade-down" data-aos-duration="800">
@@ -425,13 +497,25 @@ const Komentar = () => {
                         </div>
                     ) : (
                         comments.map((comment, index) => (
-                            <Comment 
-                                key={comment.id} 
-                                comment={comment} 
-                                formatDate={formatDate}
-                                index={index + (pinnedComment ? 1 : 0)}
-                                isPinned={false}
-                            />
+                            <div 
+                                key={comment.id}
+                                className={`transition-all duration-300 ${
+                                    comment.id.startsWith('temp-') 
+                                        ? 'animate-pulse' 
+                                        : 'animate-fade-in'
+                                }`}
+                                style={{
+                                    animationDelay: comment.id.startsWith('temp-') ? '0ms' : `${index * 100}ms`
+                                }}
+                            >
+                                <Comment 
+                                    comment={comment} 
+                                    formatDate={formatDate}
+                                    index={index + (pinnedComment ? 1 : 0)}
+                                    isPinned={false}
+                                    isOptimistic={comment.id.startsWith('temp-')}
+                                />
+                            </div>
                         ))
                     )}
                 </div>
@@ -450,6 +534,21 @@ const Komentar = () => {
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background: rgba(99, 102, 241, 0.7);
+                }
+                
+                @keyframes fade-in {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .animate-fade-in {
+                    animation: fade-in 0.3s ease-out forwards;
                 }
             `}</style>
         </div>
