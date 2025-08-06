@@ -55,7 +55,7 @@ const Comment = memo(({ comment, formatDate, index, isPinned = false, isOptimist
                         />
                         {isPinned && (
                             <span className="px-2 py-0.5 text-xs bg-indigo-500/20 text-indigo-300 rounded-full">
-                                Admin
+                                Wifey
                             </span>
                         )}
                     </div>
